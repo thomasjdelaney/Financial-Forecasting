@@ -1,0 +1,2491 @@
+#LyX file created by tex2lyx 2.3
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin C:/Financial_Forecasting/lyx/
+\textclass article
+\begin_preamble
+%\usepackage[utf8x]{inputenc}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amsthm}
+\usepackage{times}
+\usepackage{graphicx}
+%\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{subcaption}
+
+
+
+\fancyhf{}
+\lhead{Thomas J. Delaney}
+\rhead{Meta-learning for financial forecasting}
+\cfoot{\thepage}
+
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\boldnabla}{\mbox{\boldmath$\nabla$}} % to be used in mathmode
+\newcommand{\cbar}{\overline{\mathbb{C}}}% to be used in mathmode
+\newcommand{\diff}[2]{\frac{d #1}{d #2}}% to be used in mathmode
+\newcommand{\difff}[2]{\frac{d^2 #1}{d #2^2}}% to be used in mathmode
+\newcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}} % to be used in mathmode
+\newcommand{\pdifff}[2]{\frac{\partial^2 #1}{\partial #2^2}}% to be used in mathmode
+\newcommand{\upperth}{$^{\mbox{\footnotesize{th}}}$}%to be used in text mode
+\newcommand{\vect}[1]{\mathbf{#1}}% to be used in mathmode
+\newcommand{\curl}[1]{\boldnabla \times \vect{#1}} % to be used in mathmode
+\newcommand{\divr}[1]{\boldnabla \cdot \vect{#1}} %to be used in mathmode
+\newcommand{\modu}[1]{\left| #1 \right|} %to be used in mathmode
+\newcommand{\brak}[1]{\left( #1 \right)} % to be used in mathmode
+\newcommand{\comm}[2]{\left[ #1 , #2 \right]} %to be used in mathmode
+\newcommand{\dop}{\vect{d}} %to be used in mathmode
+\newcommand{\cov}{\text{cov}} %to be used in mathmode
+\newcommand{\var}{\text{var}} %to be used in mathmode
+\newcommand{\mb}{\mathbf} %to be used in mathmode
+\newcommand{\bs}{\boldsymbol} %to be used in mathmode
+% Title Page
+\title{Meta-learning for financial forecasting}
+
+\author{Thomas J. Delaney}
+
+
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding default
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref true
+\pdf_bookmarks 0
+\pdf_bookmarksnumbered 0
+\pdf_bookmarksopen 0
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks 0
+\pdf_pdfborder 0
+\pdf_colorlinks 0
+\pdf_backref section
+\pdf_pdfusetitle 0
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 2
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date true
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+maketitle
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The point of this document is to review our experiments with the meta-learning forecasting method developed by Pablo Montero-Manso et al (2018) 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "montero"
+literal "true"
+
+\end_inset
+
+ for the M4 competition 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "m4"
+literal "true"
+
+\end_inset
+
+. The method was written in the programming language 
+\family typewriter
+R
+\family default
+, and all the programming and analysis outlined in this document was also performed in 
+\family typewriter
+R
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+First we will outline the objectives of these experiments. Then we will give some background on the M4 competition and the meta-learning forecasting method itself. Then we will outline the experiments performed, and the results obtained. The document will conclude with a description of the limitations of our experiments, and suggestions for further research.
+\end_layout
+
+\begin_layout Section
+Objectives
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:objectives"
+
+\end_inset
+
+ Our overall objective was to assess how useful the meta-learning forecasting method is in the context of financial forecasting. In order to do this, we did the following: 
+\end_layout
+
+\begin_layout Enumerate
+We replicated the findings reported by Montero-Manso et al in their submission to the M4 competition. We focussed on the financial time series provided for the M4 competition in particular. 
+\end_layout
+
+\begin_layout Enumerate
+We obtained time series from real financial contexts, equity and fixed income prices from the early 
+\begin_inset Formula $21^{\text{st}}$
+\end_inset
+
+ century. We formatted these data to match the M4 competition data. 
+\end_layout
+
+\begin_layout Enumerate
+We applied our meta-learning forecasting method trained on financial data only to an augmented test set that included the real financial data. 
+\end_layout
+
+\begin_layout Enumerate
+We compared the performance of the meta-learning method to the performances of the simpler forecasting methods used in the meta-learning framework. 
+\end_layout
+
+\begin_layout Standard
+We also aimed to find out if an improvement in the model's performance on our real financial data could be achieved by training the model on data from a non-financial context (aka. 
+\shape italic
+ transfer learning
+\shape default
+). The authors of the meta-learning method provided a github repository containing the meta-learning model trained on the full M4 competition data 
+\begin_inset Foot
+status collapsed
+
+
+\begin_layout Standard
+For details on downloading the trained model, see: 
+\begin_inset Flex Flex:URL
+status collapsed
+
+\begin_layout Plain Layout
+https://github.com/robjhyndman/M4metalearning/blob/master/docs/M4_reprod.md
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+. We applied this fully trained model to a test set consisting of just the real financial data. In order to achieve our secodary aim, we compared the performance of the fully trained meta-learning method to the performance of the financially trained meta-learning method on our financial data.
+\end_layout
+
+\begin_layout Section
+Background
+\end_layout
+
+\begin_layout Standard
+The M4 competition is a time series forecasting competition in which a dataset of time series is provided, and researchers and developers are challenged to develop the most accurate forecasting method for these series. No driving series are provided for any of the time series, so all of the methods developed are univariate. The M4 competition is the fourth in a series of forecasting competitions, and took place in 2018. The dataset consisted of 
+\begin_inset Formula $100000$
+\end_inset
+
+ time series from demographic, financial, industrial, macro and micro economic, and miscellaneous contexts. All of the time series were recorded either hourly, daily, weekly, monthly, quarterly, or yearly. The methods are judged by an error metric on their mean forecast, and another error metric on their prediction intervals. For more information on the M4 competition, see 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "m4"
+literal "true"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The meta-learning forecasting method that we use in these experiments came second in the M4 competition. The meta-learning forecasting method is an example of an 
+\shape italic
+ensemble forecasting
+\shape default
+ method. An ensemble forecasting method combines multiple forecasts to produce another forecast more accurate than its constituents. The meta-learning forecasting method learns a set of weights for combining the forecasts and prediction intervals of simpler forecasting methods in a way that gives a minimal forecasting error across all of the time-series provided. For more details on the method see 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "lit"
+literal "true"
+
+\end_inset
+
+, section 
+\begin_inset Formula $8.3.2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Methods
+\end_layout
+
+\begin_layout Subsection
+Error Measures
+\end_layout
+
+\begin_layout Standard
+For the M4 competition, a composite error measure is used. This is a combination of the symmetric mean absolute percentage error (sMAPE), and the mean absolute scaled error (MASE) for seasonal series.
+\end_layout
+
+\begin_layout Standard
+Note that when comparing the performance of the meta-learning method to other methods, we just used the median absolute percentage error (MdAPE) as this measure is more robust to outliers.
+\end_layout
+
+\begin_layout Subsubsection
+Symmetric Mean Absolute Percentage Error (sMAPE)
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:smape"
+
+\end_inset
+
+ The forumula for calculating the sMAPE is 
+\begin_inset Formula \begin{equation}
+	sMAPE = \frac{1}{h}\sum_{t=1}^{h}\frac{2 |Y_t - \hat{Y}_t|}{|Y_t| + |\hat{Y}_t|}
+\end{equation}
+\end_inset
+
+where 
+\begin_inset Formula $h$
+\end_inset
+
+ is the forecast horizon, 
+\begin_inset Formula $Y_t$
+\end_inset
+
+ is the value of the time series during the forecasted period, and 
+\begin_inset Formula $\hat{Y}_t$
+\end_inset
+
+ is the forecasted value for 
+\begin_inset Formula $Y_t$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Mean Absolute Square Error
+\end_layout
+
+\begin_layout Standard
+The formula for calculating the MASE for season series is 
+\begin_inset Formula \begin{equation}
+	MASE = \frac{1}{h} \frac{\sum_{t=1}^{h}|Y_t - \hat{Y}_t|}{\frac{1}{h-m}\sum_{t=m+1}^{h}|Y_t - Y_{t-m}|}
+\end{equation}
+\end_inset
+
+where all variables are the same as in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:smape"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and 
+\begin_inset Formula $m$
+\end_inset
+
+ is the frequency of the data (e.g. 
+\begin_inset Formula $12$
+\end_inset
+
+ for monthly). Note that the denominator is the mean absolute error of the one-step seasonal naive forecast
+\end_layout
+
+\begin_layout Subsubsection
+Overall weighted average (OWA)
+\end_layout
+
+\begin_layout Standard
+The error measure used by the M4 competition to evaluate mean forecasts is an average of the 
+\shape italic
+relative
+\shape default
+ sMAPE, and 
+\shape italic
+relative
+\shape default
+ MASE, taken relative to the sMAPE or MASE of a seasonally adjusted na
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+ï
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ve forecast. In other words, they divided the sMAPE of the given method by the sMAPE of the seasonally adjusted na
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+ï
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ve method. They did the same for the MASE. Then they took an average of the two.
+\end_layout
+
+\begin_layout Subsubsection
+Mean Scaled Interval Score (MSIS)
+\end_layout
+
+\begin_layout Standard
+To measure the accuracy of the prediction intervals, the M4 competition uses the MSIS: 
+\begin_inset Formula \begin{equation}\label{eq:msis}
+	MSIS = \frac{1}{h}\frac{\sum_{t=1}^h (U_t - L_t) +  \frac{2}{a}(L_t - Y_t)\mathbf{1}\lbrace Y_t < L_t \rbrace + \frac{2}{a}(Y_t - U_t)\mathbf{1}\lbrace Y_t > U_t \rbrace}{\frac{1}{h-m}\sum_{t=m+1}^h | Y_t - Y_{t-m} |}
+\end{equation}
+\end_inset
+
+where 
+\begin_inset Formula $h$
+\end_inset
+
+ is the forecast horizon, 
+\begin_inset Formula $U_t$
+\end_inset
+
+ is the upper prediction interval, 
+\begin_inset Formula $L_t$
+\end_inset
+
+ is the lower prediction interval, 
+\begin_inset Formula $Y_t$
+\end_inset
+
+ is the value of the time series at time 
+\begin_inset Formula $t$
+\end_inset
+
+, 
+\begin_inset Formula $a$
+\end_inset
+
+ is a 
+\shape italic
+significance level
+\shape default
+ and 
+\begin_inset Formula \begin{equation}
+	\mathbf{1}\lbrace \text{condition} \rbrace =	\begin{cases}
+								0 \text{ if condition is false,} \\
+								1 \text{ if condition is true}
+								\end{cases}
+\end{equation}
+\end_inset
+
+is the 
+\shape italic
+indicator
+\shape default
+ function. The first term in the numerator of (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:msis"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) rewards a tighter prediction interval with a smaller error. The second and third terms penalise any elements of the time series that fall outside of the prediction interval.
+\end_layout
+
+\begin_layout Subsection
+Finance only model
+\end_layout
+
+\begin_layout Subsubsection
+Training the model
+\end_layout
+
+\begin_layout Standard
+To train a meta-learning model specificially for financial data, we extracted the financial time series from the M4 database. There were 
+\begin_inset Formula $24534$
+\end_inset
+
+ series in total. See table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:frequency_breakdown"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for a breakdown of the frequencies of these series.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:frequency_breakdown"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Tabular 
+<lyxtabular version="3" rows="7" columns="6">
+<features rotate="0" tabularvalignment="middle" tabularwidth="0pt">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="left" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="center" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Frequency
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Number of Series
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Hourly 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Daily 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+1559 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Weekly 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+164 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Monthly 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+10987 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Quarterly 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+5305 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Yearly 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+6519 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The number of series for each frequency in the financial time series.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:frequency_breakdown"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We divided this dataset up into a training set of 
+\begin_inset Formula $n_{training} = 20000$
+\end_inset
+
+ series and a test set of 
+\begin_inset Formula $n_{test} = 4534$
+\end_inset
+
+ series. In order to train the meta-learning model we did the following: 
+\end_layout
+
+\begin_layout Enumerate
+We divided each individual series in the training set into training and holdout series, where the holdout series is taken from the end of the original series, and is the length of the forecast horizon. 
+\end_layout
+
+\begin_layout Enumerate
+We then calculated forecasts for each series in the training set, using each of the 9 forecasting methods included in the meta-learning framework. Each of these methods were implemented using the 
+\family typewriter
+forecast
+\family default
+ library in 
+\family typewriter
+R
+\family default
+. 
+\end_layout
+
+\begin_layout Enumerate
+The error measures used by the M4 competition were calculated for each of the 9 forecasts for each series. 
+\end_layout
+
+\begin_layout Enumerate
+The 42 features used in the meta-learning model were extracted from each series. 
+\end_layout
+
+\begin_layout Enumerate
+By training multiple 
+\family typewriter
+xgboost
+\family default
+ random forests on our dataset of features and series we found the ideal hyperparameters for an 
+\family typewriter
+xgboost
+\family default
+ random forest. 
+\end_layout
+
+\begin_layout Enumerate
+Using these hyperparameters we trained an 
+\family typewriter
+xgboost
+\family default
+ random forest model, using the M4 competition error measurement as an objective function to minimise. This 
+\family typewriter
+xgboost
+\family default
+ random forest is the trained meta-learning model. 
+\end_layout
+
+\begin_layout Subsubsection
+Using the model
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:using"
+
+\end_inset
+
+ In order to use the model, we did the following: 
+\end_layout
+
+\begin_layout Enumerate
+We divided each indivudual series in the test set into training and holdout series. Similarly to the set of training series, the holdout series is taken from the end of the original series, and is the length of the forecast horizon. 
+\end_layout
+
+\begin_layout Enumerate
+We calculated forecasts for each of the series in the test set, using each of the 9 forecasting methods included in the meta-learning framework. 
+\end_layout
+
+\begin_layout Enumerate
+The 42 features used in the meta-learning model were extracted from each series in the test set. 
+\end_layout
+
+\begin_layout Enumerate
+Given the test set of 
+\begin_inset Formula $n_{test}$
+\end_inset
+
+ series and the features extracted from those test series, the trained meta-learning model returned 
+\begin_inset Formula $n_{test}$
+\end_inset
+
+ vectors of 9 real numbers between 
+\begin_inset Formula $0$
+\end_inset
+
+ and 
+\begin_inset Formula $1$
+\end_inset
+
+, which sum to one. These 9 numbers are used to create a weighted sum of the 9 forecasts calculated in step 2. This weighted sum of forecasts is the forecast of the meta-learning forecasting method. 
+\end_layout
+
+\begin_layout Standard
+To evalute the performance of the model on our real financial data, we formatted the data similarly to the M4 data, and we simply concatenated our data with the test set. We had *instert figure here* weekly time series, and *insert figure here* daily series.
+\end_layout
+
+\begin_layout Subsection
+Fully trained model
+\end_layout
+
+\begin_layout Standard
+To apply the fully trained meta-learning model to the test data, we downloaded the model from the repository mentioned in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:objectives"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+. We then followed the same steps as those outlined in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:using"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, using the fully trained model instead of the finance only model.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Comparison to simpler methods
+\end_layout
+
+\begin_layout Standard
+We first transformed our real financial data into the M4 competition format and applied the fully trained meta-learning model to these data. The forecast horizons were determined by the frequency of the data, 
+\begin_inset Formula $14$
+\end_inset
+
+ for daily, 
+\begin_inset Formula $13$
+\end_inset
+
+ for weekly. We compared the performance of the meta-learning method to all of the simpler methods in the meta-learning framework using the MdAPE. We found that the fully trained meta-learning model performed worse on this dataset than most of the simpler forecasting methods. The best performing method was the random walk with drift method. We then trained the finance only meta-learning model, using only a subset of the M4 financial data, and applied this model to the real financial data. This meta-learning model did perform better than the fully trained model, but the random walk with drift was still the best performing method (see table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:finance_only_results"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+We then applied both of these meta-learning models to a test set of M4 financial data. Again, we measured the MdAPE of the forecasts of each meta-learning model and the nine simpler methods. The results obtained this time agreed with what might be expected. The best performing method was the fully trained meta-learning method, and the second best performing method was the finance only meta-learning method (see table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:finance_only_results"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for full results).
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Tabular 
+<lyxtabular version="3" rows="12" columns="9">
+<features rotate="0" tabularvalignment="middle" tabularwidth="0pt">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="left" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="center" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="center" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Forecasting Method
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+M4 Finance MdAPE
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Real Finance MdAPE
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Meta-learning 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.093 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.016 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Meta-learning (finance only) 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.123 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.015 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Random Walk with Drift 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.147 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.013 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+ARIMA 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.137 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.014 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+ETS 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.138 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.015 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Neural Network 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.176 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.024 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+TBATS 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.137 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.015 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+STL 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.232 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.326 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Theta 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.138 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.014 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Na
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+ï
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ve 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.151 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.015 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Seasonal na
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+ï
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ve 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.163 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.015 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Median absolute percentage error of various forecasting methods on the M4 financial time series and the real financial time series. We used the meta-learning method trained using all of the M4 time series and another meta-learning method trained using only a subset of the financial time series from the M4 time series. Note that most of the forecasting methods perform better on the real financial dataset compared to the M4 financial dataset. But while the best performing method on the M4 financial dataset was the fully trained meta-learning method, the best performing method on the real financial dataset is the random walk with drift.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:finance_only_results"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Overall Weighted Averages
+\end_layout
+
+\begin_layout Standard
+We also compared the overall weighted averages of the fully trained and finance only meta-learning models when applied to the M4 financial data and the real financial data. By this measurement, the fully trained meta-leaning method performs the best on the M4 financial data. This suggests that there is some transfer learning occurring when training on the M4 dataset. However, the finance only meta-learning model performs better on the real financial data. So there is no transfer learning happening in this context. See table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:meta_learning_errors"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for full results and comparison to the result reported to the M4 competition.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Tabular 
+<lyxtabular version="3" rows="6" columns="9">
+<features rotate="0" tabularvalignment="middle" tabularwidth="0pt">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="left" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="center" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="none" valignment="top" special=" ">
+<column alignment="center" valignment="top">
+<column alignment="none" valignment="top" special=" ">
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Meta-Learning Model
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Dataset
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Overall Weighted Average
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Finance only 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+M4 financial 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.716 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Finance only 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Real financial 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.956 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Fully trained 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+M4 financial 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.583 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Fully trained 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Real financial 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+1.037 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Fully trained 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Full M4 dataset 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+0.838
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "res"
+literal "true"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The overall weighted average error of the finance only and fully trained meta-learning model applied to both the M4 financial data and the real financial data. Note that by this measure the meta-learning model performs better on the M4 financial data. On the real data, the finance only model outperforms the fully trained model, similar to the findings in table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:finance_only_results"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:meta_learning_errors"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Ideal 
+\family typewriter
+xgboost
+\family default
+ hyperparameters
+\end_layout
+
+\begin_layout Standard
+In our search for good hyperparamters for the 
+\family typewriter
+xgboost
+\family default
+ random forest, we tried 
+\begin_inset Formula $106$
+\end_inset
+
+ different combinations of these parameters. The parameters were 
+\end_layout
+
+\begin_layout Itemize
+the maximum depth of the trees, 
+\end_layout
+
+\begin_layout Itemize
+the learning rate 
+\begin_inset Formula $\eta$
+\end_inset
+
+, 
+\end_layout
+
+\begin_layout Itemize
+the data subsampling rate, 
+\end_layout
+
+\begin_layout Itemize
+the feature subsampling rate. 
+\end_layout
+
+\begin_layout Standard
+During the searching process each combination of paramters and the resulting objective function value was recorded. We clustered these 
+\begin_inset Formula $106$
+\end_inset
+
+ data points using a Gaussian mixture model. The optimal model was found by minimising the Bayesian information criterion (BIC). This gave a model consisting of two gaussian distributions. We examined the means and covariance matrices for each of these Gaussians. The only major difference between the two distributions was the mean value for 
+\begin_inset Formula $\eta$
+\end_inset
+
+. It seemed like a lower learning rate resulted in a worse performance.
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+We applied the forecasting method that came second in the M4 time series forecasting competition to real financial time series and the M4 financial data, and compared the results. The method itself is an ensemble forecasting method, trained using machine learning. We refer to it as the meta-learning method. Although the method performed well on the M4 financial data, it was outperformed by simpler statistical methods when applied to the real financial data. This implies that any information that can be used by any of the statistical models in the meta-learning framework to forecast the real financial time series has already be found, and aggregated away through arbitrage.
+\end_layout
+
+\begin_layout Subsection
+Limitations
+\end_layout
+
+\begin_layout Standard
+The M4 competition provides a dataset of time series only, and requires the competitors to forecast each individual series. There are no driving series, and there is no other information other than the context of the series. Therefore each of the methods in the M4 competition, including the meta-learning method, are univariate. In a financial context, we would expect driving factors to be a vital part of any forecasting framework. Therefore the forecasting methods developed for the M4 competition may not be well suited for financial forecasting.
+\end_layout
+
+\begin_layout Subsection
+Further Research
+\end_layout
+
+\begin_layout Standard
+The meta-learning forecasting method uses mostly statistical methods in its ensemble framework. It does use one neural network through the 
+\family typewriter
+nnetar
+\family default
+ function in the 
+\family typewriter
+forecasting
+\family default
+ package, but this is a feedforward neural network that uses a small number of time-lags as inputs. This is not the optimal implementation of neural networks for time series.
+\end_layout
+
+\begin_layout Standard
+Recurrent neural networks are designed for processing time series. So implementation of the most up-to-date innovations in recurrent neural networks is a good starting point for further research. Convolutional recurrent neural networks, long-short term memory (LSTM) networks, and neural networks with gated recurrent units (GRU) are examples of these innovations. The theory is that these networks should be able to capture long-term effects better than statistical methods. In fact, the winner of the M4 competition was a forecasting method that combined exponential smoothing and various architectures of recurrent neural networks 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "m4"
+literal "true"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "meta-learning_method_review.bbl"
+options "default"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

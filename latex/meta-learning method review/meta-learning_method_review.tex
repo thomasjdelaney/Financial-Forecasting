@@ -1,0 +1,234 @@
+\documentclass[a4paper,12pt]{article}
+%\usepackage[utf8x]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[margin=3cm]{geometry}
+\usepackage{times}
+\usepackage{graphicx}
+%\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{mathtools}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Thomas J. Delaney}
+\rhead{Meta-learning for financial forecasting}
+\cfoot{\thepage}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\boldnabla}{\mbox{\boldmath$\nabla$}} % to be used in mathmode
+\newcommand{\cbar}{\overline{\mathbb{C}}}% to be used in mathmode
+\newcommand{\diff}[2]{\frac{d #1}{d #2}}% to be used in mathmode
+\newcommand{\difff}[2]{\frac{d^2 #1}{d #2^2}}% to be used in mathmode
+\newcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}} % to be used in mathmode
+\newcommand{\pdifff}[2]{\frac{\partial^2 #1}{\partial #2^2}}% to be used in mathmode
+\newcommand{\upperth}{$^{\mbox{\footnotesize{th}}}$}%to be used in text mode
+\newcommand{\vect}[1]{\mathbf{#1}}% to be used in mathmode
+\newcommand{\curl}[1]{\boldnabla \times \vect{#1}} % to be used in mathmode
+\newcommand{\divr}[1]{\boldnabla \cdot \vect{#1}} %to be used in mathmode
+\newcommand{\modu}[1]{\left| #1 \right|} %to be used in mathmode
+\newcommand{\brak}[1]{\left( #1 \right)} % to be used in mathmode
+\newcommand{\comm}[2]{\left[ #1 , #2 \right]} %to be used in mathmode
+\newcommand{\dop}{\vect{d}} %to be used in mathmode
+\newcommand{\cov}{\text{cov}} %to be used in mathmode
+\newcommand{\var}{\text{var}} %to be used in mathmode
+\newcommand{\mb}{\mathbf} %to be used in mathmode
+\newcommand{\bs}{\boldsymbol} %to be used in mathmode
+% Title Page
+\title{Meta-learning for financial forecasting}
+\date{}
+\author{Thomas J. Delaney}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+The point of this document is to review our experiments with the meta-learning forecasting method developed by Pablo Montero-Manso et al (2018) \cite{montero} for the M4 competition \cite{m4}. The method was written in the programming language \texttt{R}, and all the programming and analysis outlined in this document was also performed in \texttt{R}.
+
+First we will outline the objectives of these experiments. Then we will give some background on the M4 competition and the meta-learning forecasting method itself. Then we will outline the experiments performed, and the results obtained. The document will conclude with a description of the limitations of our experiments, and suggestions for further research.
+
+\section{Objectives}\label{sec:objectives}
+Our overall objective was to assess how useful the meta-learning forecasting method is in the context of financial forecasting. In order to do this, we did the following:
+\begin{enumerate}
+	\item We replicated the findings reported by Montero-Manso et al in their submission to the M4 competition. We focussed on the financial time series provided for the M4 competition in particular.
+	\item We obtained time series from real financial contexts, equity and fixed income prices from the early $21^{\text{st}}$ century. We formatted these data to match the M4 competition data.
+	\item We applied our meta-learning forecasting method trained on financial data only to an augmented test set that included the real financial data.
+	\item We compared the performance of the meta-learning method to the performances of the simpler forecasting methods used in the meta-learning framework.
+\end{enumerate}
+
+We also aimed to find out if an improvement in the model's performance on our real financial data could be achieved by training the model on data from a non-financial context (aka. \textit{ transfer learning}). The authors of the meta-learning method provided a github repository containing the meta-learning model trained on the full M4 competition data \footnote{For details on downloading the trained model, see: \url{https://github.com/robjhyndman/M4metalearning/blob/master/docs/M4_reprod.md}}. We applied this fully trained model to a test set consisting of just the real financial data. In order to achieve our secodary aim, we compared the performance of the fully trained meta-learning method to the performance of the financially trained meta-learning method on our financial data.
+
+\section{Background}
+The M4 competition is a time series forecasting competition in which a dataset of time series is provided, and researchers and developers are challenged to develop the most accurate forecasting method for these series. No driving series are provided for any of the time series, so all of the methods developed are univariate. The M4 competition is the fourth in a series of forecasting competitions, and took place in 2018. The dataset consisted of $100000$ time series from demographic, financial, industrial, macro and micro economic, and miscellaneous contexts. All of the time series were recorded either hourly, daily, weekly, monthly, quarterly, or yearly. The methods are judged by an error metric on their mean forecast, and another error metric on their prediction intervals. For more information on the M4 competition, see \cite{m4}.
+
+The meta-learning forecasting method that we use in these experiments came second in the M4 competition. The meta-learning forecasting method is an example of an \textit{ensemble forecasting} method. An ensemble forecasting method combines multiple forecasts to produce another forecast more accurate than its constituents. The meta-learning forecasting method learns a set of weights for combining the forecasts and prediction intervals of simpler forecasting methods in a way that gives a minimal forecasting error across all of the time-series provided. For more details on the method see \cite{lit}, section $8.3.2$.
+
+\section{Methods}
+\subsection{Error Measures}
+For the M4 competition, a composite error measure is used. This is a combination of the symmetric mean absolute percentage error (sMAPE), and the mean absolute scaled error (MASE) for seasonal series.
+
+Note that when comparing the performance of the meta-learning method to other methods, we just used the median absolute percentage error (MdAPE) as this measure is more robust to outliers.
+
+\subsubsection{Symmetric Mean Absolute Percentage Error (sMAPE)}\label{sec:smape}
+The forumula for calculating the sMAPE is
+\begin{equation}
+	sMAPE = \frac{1}{h}\sum_{t=1}^{h}\frac{2 |Y_t - \hat{Y}_t|}{|Y_t| + |\hat{Y}_t|}
+\end{equation}
+where $h$ is the forecast horizon, $Y_t$ is the value of the time series during the forecasted period, and $\hat{Y}_t$ is the forecasted value for $Y_t$. 
+
+\subsubsection{Mean Absolute Square Error}
+The formula for calculating the MASE for season series is
+\begin{equation}
+	MASE = \frac{1}{h} \frac{\sum_{t=1}^{h}|Y_t - \hat{Y}_t|}{\frac{1}{h-m}\sum_{t=m+1}^{h}|Y_t - Y_{t-m}|}
+\end{equation}
+where all variables are the same as in section \ref{sec:smape}, and $m$ is the frequency of the data (e.g. $12$ for monthly). Note that the denominator is the mean absolute error of the one-step seasonal naive forecast
+
+\subsubsection{Overall weighted average (OWA)}
+The error measure used by the M4 competition to evaluate mean forecasts is an average of the \textit{relative} sMAPE, and \textit{relative} MASE, taken relative to the sMAPE or MASE of a seasonally adjusted na{\"i}ve forecast. In other words, they divided the sMAPE of the given method by the sMAPE of the seasonally adjusted na{\"i}ve method. They did the same for the MASE. Then they took an average of the two.
+
+\subsubsection{Mean Scaled Interval Score (MSIS)}
+To measure the accuracy of the prediction intervals, the M4 competition uses the MSIS:
+\begin{equation}\label{eq:msis}
+	MSIS = \frac{1}{h}\frac{\sum_{t=1}^h (U_t - L_t) +  \frac{2}{a}(L_t - Y_t)\mathbf{1}\lbrace Y_t < L_t \rbrace + \frac{2}{a}(Y_t - U_t)\mathbf{1}\lbrace Y_t > U_t \rbrace}{\frac{1}{h-m}\sum_{t=m+1}^h | Y_t - Y_{t-m} |}
+\end{equation}
+where $h$ is the forecast horizon, $U_t$ is the upper prediction interval, $L_t$ is the lower prediction interval, $Y_t$ is the value of the time series at time $t$, $a$ is a \textit{significance level} and
+\begin{equation}
+	\mathbf{1}\lbrace \text{condition} \rbrace =	\begin{cases}
+								0 \text{ if condition is false,} \\
+								1 \text{ if condition is true}
+								\end{cases}
+\end{equation}
+is the \textit{indicator} function. The first term in the numerator of (\ref{eq:msis}) rewards a tighter prediction interval with a smaller error. The second and third terms penalise any elements of the time series that fall outside of the prediction interval.
+
+\subsection{Finance only model}
+\subsubsection{Training the model}
+To train a meta-learning model specificially for financial data, we extracted the financial time series from the M4 database. There were $24534$ series in total. See table \ref{tab:frequency_breakdown} for a breakdown of the frequencies of these series.
+
+\begin{table}\label{tab:frequency_breakdown}
+  \centering
+  \begin{tabular}{| l | c |}
+    \hline
+    \textbf{Frequency} & \textbf{Number of Series} \\ \hline
+    Hourly & 0 \\ \hline
+    Daily & 1559 \\ \hline
+    Weekly & 164 \\ \hline
+    Monthly & 10987 \\ \hline
+    Quarterly & 5305 \\ \hline
+    Yearly & 6519 \\ \hline
+  \end{tabular}
+  \caption{The number of series for each frequency in the financial time series.}
+  \label{tab:frequency_breakdown}
+\end{table}
+
+We divided this dataset up into a training set of $n_{training} = 20000$ series and a test set of $n_{test} = 4534$ series. In order to train the meta-learning model we did the following: 
+\begin{enumerate}
+	\item We divided each individual series in the training set into training and holdout series, where the holdout series is taken from the end of the original series, and is the length of the forecast horizon.
+	\item We then calculated forecasts for each series in the training set, using each of the 9 forecasting methods included in the meta-learning framework. Each of these methods were implemented using the \texttt{forecast} library in \texttt{R}.
+	\item The error measures used by the M4 competition were calculated for each of the 9 forecasts for each series.
+	\item The 42 features used in the meta-learning model were extracted from each series.
+	\item By training multiple \texttt{xgboost} random forests on our dataset of features and series we found the ideal hyperparameters for an \texttt{xgboost} random forest.
+	\item Using these hyperparameters we trained an \texttt{xgboost} random forest model, using the M4 competition error measurement as an objective function to minimise. This \texttt{xgboost} random forest is the trained meta-learning model.
+\end{enumerate}
+
+\subsubsection{Using the model}\label{sec:using}
+In order to use the model, we did the following:
+\begin{enumerate}
+	\item We divided each indivudual series in the test set into training and holdout series. Similarly to the set of training series, the holdout series is taken from the end of the original series, and is the length of the forecast horizon.
+	\item We calculated forecasts for each of the series in the test set, using each of the 9 forecasting methods included in the meta-learning framework.
+	\item The 42 features used in the meta-learning model were extracted from each series in the test set.
+	\item Given the test set of $n_{test}$ series and the features extracted from those test series, the trained meta-learning model returned $n_{test}$ vectors of 9 real numbers between $0$ and $1$, which sum to one. These 9 numbers are used to create a weighted sum of the 9 forecasts calculated in step 2. This weighted sum of forecasts is the forecast of the meta-learning forecasting method.
+\end{enumerate}
+To evalute the performance of the model on our real financial data, we formatted the data similarly to the M4 data, and we simply concatenated our data with the test set. We had *instert figure here* weekly time series, and *insert figure here* daily series.
+
+\subsection{Fully trained model}
+To apply the fully trained meta-learning model to the test data, we downloaded the model from the repository mentioned in section \ref{sec:objectives}. We then followed the same steps as those outlined in section \ref{sec:using}, using the fully trained model instead of the finance only model.
+
+\section{Results}
+
+\subsection{Comparison to simpler methods}
+We first transformed our real financial data into the M4 competition format and applied the fully trained meta-learning model to these data. The forecast horizons were determined by the frequency of the data, $14$ for daily, $13$ for weekly. We compared the performance of the meta-learning method to all of the simpler methods in the meta-learning framework using the MdAPE. We found that the fully trained meta-learning model performed worse on this dataset than most of the simpler forecasting methods. The best performing method was the random walk with drift method. We then trained the finance only meta-learning model, using only a subset of the M4 financial data, and applied this model to the real financial data. This meta-learning model did perform better than the fully trained model, but the random walk with drift was still the best performing method (see table \ref{tab:finance_only_results}).
+
+We then applied both of these meta-learning models to a test set of M4 financial data. Again, we measured the MdAPE of the forecasts of each meta-learning model and the nine simpler methods. The results obtained this time agreed with what might be expected. The best performing method was the fully trained meta-learning method, and the second best performing method was the finance only meta-learning method (see table \ref{tab:finance_only_results} for full results).
+
+\begin{table}
+  \centering
+  \begin{tabular}{| l | c | c |}
+    \hline
+    \textbf{Forecasting Method} & \textbf{M4 Finance MdAPE} & \textbf{Real Finance MdAPE} \\ \hline
+    Meta-learning & 0.093 & 0.016 \\ \hline
+    Meta-learning (finance only) & 0.123 & 0.015 \\ \hline
+    Random Walk with Drift & 0.147 & 0.013 \\ \hline
+    ARIMA & 0.137 & 0.014 \\ \hline
+    ETS & 0.138 & 0.015 \\ \hline
+    Neural Network & 0.176 & 0.024 \\ \hline
+    TBATS & 0.137 & 0.015 \\ \hline
+    STL & 0.232 & 0.326 \\ \hline
+    Theta & 0.138 & 0.014 \\ \hline
+    Na{\"i}ve & 0.151 & 0.015 \\ \hline
+    Seasonal na{\"i}ve & 0.163 & 0.015 \\ \hline
+  \end{tabular}
+  \caption{Median absolute percentage error of various forecasting methods on the M4 financial time series and the real financial time series. We used the meta-learning method trained using all of the M4 time series and another meta-learning method trained using only a subset of the financial time series from the M4 time series. Note that most of the forecasting methods perform better on the real financial dataset compared to the M4 financial dataset. But while the best performing method on the M4 financial dataset was the fully trained meta-learning method, the best performing method on the real financial dataset is the random walk with drift.}
+  \label{tab:finance_only_results}
+\end{table}
+
+\subsection{Overall Weighted Averages}
+We also compared the overall weighted averages of the fully trained and finance only meta-learning models when applied to the M4 financial data and the real financial data. By this measurement, the fully trained meta-leaning method performs the best on the M4 financial data. This suggests that there is some transfer learning occurring when training on the M4 dataset. However, the finance only meta-learning model performs better on the real financial data. So there is no transfer learning happening in this context. See table \ref{tab:meta_learning_errors} for full results and comparison to the result reported to the M4 competition.
+
+\begin{table}
+  \centering
+  \begin{tabular}{| l | c | c |}
+    \hline
+    \textbf{Meta-Learning Model} & \textbf{Dataset} & \textbf{Overall Weighted Average} \\ \hline
+    Finance only & M4 financial & 0.716 \\ \hline
+    Finance only & Real financial & 0.956 \\ \hline
+    Fully trained & M4 financial & 0.583 \\ \hline
+    Fully trained & Real financial & 1.037 \\ \hline
+    Fully trained & Full M4 dataset & 0.838\cite{res} \\ \hline
+  \end{tabular}
+  \caption{The overall weighted average error of the finance only and fully trained meta-learning model applied to both the M4 financial data and the real financial data. Note that by this measure the meta-learning model performs better on the M4 financial data. On the real data, the finance only model outperforms the fully trained model, similar to the findings in table \ref{tab:finance_only_results}.}
+  \label{tab:meta_learning_errors}
+\end{table}
+
+\subsection{Ideal \texttt{xgboost} hyperparameters}
+In our search for good hyperparamters for the \texttt{xgboost} random forest, we tried $106$ different combinations of these parameters. The parameters were 
+\begin{itemize}
+	\item the maximum depth of the trees,
+	\item the learning rate $\eta$,
+	\item the data subsampling rate,
+	\item the feature subsampling rate.
+\end{itemize}
+During the searching process each combination of paramters and the resulting objective function value was recorded. We clustered these $106$ data points using a Gaussian mixture model. The optimal model was found by minimising the Bayesian information criterion (BIC). This gave a model consisting of two gaussian distributions. We examined the means and covariance matrices for each of these Gaussians. The only major difference between the two distributions was the mean value for $\eta$. It seemed like a lower learning rate resulted in a worse performance.
+
+\section{Conclusions}
+We applied the forecasting method that came second in the M4 time series forecasting competition to real financial time series and the M4 financial data, and compared the results. The method itself is an ensemble forecasting method, trained using machine learning. We refer to it as the meta-learning method. Although the method performed well on the M4 financial data, it was outperformed by simpler statistical methods when applied to the real financial data. This implies that any information that can be used by any of the statistical models in the meta-learning framework to forecast the real financial time series has already be found, and aggregated away through arbitrage.
+
+\subsection{Limitations}
+The M4 competition provides a dataset of time series only, and requires the competitors to forecast each individual series. There are no driving series, and there is no other information other than the context of the series. Therefore each of the methods in the M4 competition, including the meta-learning method, are univariate. In a financial context, we would expect driving factors to be a vital part of any forecasting framework. Therefore the forecasting methods developed for the M4 competition may not be well suited for financial forecasting. 
+
+\subsection{Further Research}
+The meta-learning forecasting method uses mostly statistical methods in its ensemble framework. It does use one neural network through the \texttt{nnetar} function in the \texttt{forecasting} package, but this is a feedforward neural network that uses a small number of time-lags as inputs. This is not the optimal implementation of neural networks for time series. 
+
+Recurrent neural networks are designed for processing time series. So implementation of the most up-to-date innovations in recurrent neural networks is a good starting point for further research. Convolutional recurrent neural networks, long-short term memory (LSTM) networks, and neural networks with gated recurrent units (GRU) are examples of these innovations. The theory is that these networks should be able to capture long-term effects better than statistical methods. In fact, the winner of the M4 competition was a forecasting method that combined exponential smoothing and various architectures of recurrent neural networks \cite{m4}.
+
+\newpage
+
+\bibliography{meta-learning_method_review.bbl}
+
+\end{document}

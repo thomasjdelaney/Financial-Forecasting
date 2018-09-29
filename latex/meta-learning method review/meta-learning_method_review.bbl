@@ -1,0 +1,28 @@
+\begin{thebibliography}{9}
+  \bibitem{montero}
+  Pablo Montero-Manso, Thiyanga Talagala, Rob J Hyndman, George Athanasopoulos,
+  \emph{M4metalearning}.
+  https://github.com/robjhyndman/M4metalearning/,
+  M4 Competition,
+  (2018)
+
+  \bibitem{m4}
+  Spyros Makridakis,
+  \emph{M4 Competition}.
+  https://www.m4.unic.ac.cy/about/,
+  University of Nicosia,
+  (2018)
+  
+  \bibitem{lit}
+  Thomas Delaney,
+  \emph{Forecasting Methods: An Overview}.
+  https://bitbucket.org/thomasjdelaney/financial-forecasting/src/master/latex,
+  (2018)
+  
+  \bibitem{res}
+  Evangelos Spiliotis, Spyros Makridakis, Vassilios Assimakopoulos,
+  \emph{The M4 Competition in Progress}.
+  https://www.m4.unic.ac.cy/wp-content/uploads/2018/06/Evangelos\_Spiliotis\_ISF2018.pdf,
+  (2018)
+
+\end{thebibliography}

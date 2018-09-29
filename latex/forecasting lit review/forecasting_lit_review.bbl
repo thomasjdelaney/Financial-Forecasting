@@ -1,0 +1,85 @@
+\begin{thebibliography}{9}
+  \bibitem{fpp}
+  Rob J Hyndman, George Athanasopoulos,
+  \emph{Forecasting: Principles and Practice}.
+  Monash University, Australia,
+  (2018)
+    
+  \bibitem{talagala}
+  Thiyanga S Talagala, Rob J Hyndman, George Athanasopoulos,
+  \emph{Meta-learning how to forecast time series}.
+  Monash Econometrics and Business Statistics Working Papers, 
+  Monash University, Department of Econometrics and Business Statistics,
+  (2018)
+  
+  \bibitem{hyndman}
+  Pablo Montero-Manso, Thiyanga Talagala, Rob J Hyndman, George Athanasopoulos,
+  \emph{https://github.com/robjhyndman/M4metalearning}.
+  M4 Competition
+  (2018)
+  
+  \bibitem{cho}
+  Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, Yoshua Bengio,
+  \emph{Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation}.
+  EMNLP,
+  1724–1734,
+  (2014)
+  
+  \bibitem{chung}
+  Junyoung Chung, Caglar Gulcehre, KyungHyun Cho, Yoshua Bengio,
+  \emph{Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling}.
+  NIPS,
+  (2014)
+  
+  \bibitem{janet}
+  Jos van der Westhuizen, Joan Lasenby,
+  \emph{The Unreasonable Effectiveness of the Forget Gate}.
+  https://arxiv.org/pdf/1804.04849.pdf,
+  (2018)
+  
+  \bibitem{tallec}
+  Corentin Tallec, Yann Ollivier,
+  \emph{Can Recurrent Neural Networks Warp Time?}
+   International Conference on Learning Representations,
+   (2018)
+   
+  \bibitem{cfm}
+  Cyrille Delabre,
+  https://github.com/cyrilledelabre/cfm-challenge
+   
+  \bibitem{he}
+  Zhen He, Shaobing Gao, Liang Xiao, Daxue Liu, Hangen He, David Barber,
+  \emph{Wider and Deeper, Cheaper and Faster: Tensorized LSTMs for Sequence Learning}.
+  NIPS,
+  (2017)
+   
+  \bibitem{chang}
+  Shiyu Chang, Yang Zhang, Wei Han, Mo Yu, Xiaoxiao Guo, Wei Tan, Kiaodong Cui, Michael Witbrock, Mark Hasegawa-Johnson, Thomas S. Huang,
+  \emph{Dilated Recurrent Neural Networks}.
+  NIPS
+  (2017)
+   
+  \bibitem{bahdanau}
+  Dzmitry Bahdanau, Kyung Hyun Cho, Yoshua Bengio,
+  \emph{Neural Machine Translation by Jointly Learning to Align and Translate}.
+   International Conference on Learning Representations,
+   (2015)
+    
+  \bibitem{resnet}
+  Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Su,
+  \emph{Deep Residual Learning for Image Recognition}.
+  Conference on Computer Vision and Pattern Recognition (CVPR),
+  (2016)
+    
+  \bibitem{kim}
+  Jaeyoung Kim, Mostafa El-Khamy, Jungwon Lee,
+  \emph{Residual LSTM: Design of a Deep Recurrent Architecture for Distant Speech Recognition}.
+  arXiv:1701.03360
+  (2017)   
+  
+  \bibitem{smyl}
+  Slawek Smyl, Jai Ranganathan, Andrea Pasqua,
+  \emph{M4 Forecasting Competition: Introducing a New Hybrid ES-RNN Model}.
+  https://eng.uber.com/m4-forecasting-competition/,
+  (2018)
+\end{thebibliography}
