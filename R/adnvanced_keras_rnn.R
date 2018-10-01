@@ -1,17 +1,18 @@
-# dir.create("~/Downloads/jena_climate", recursive = TRUE)
+# dir.create("~/Data/jena_climate", recursive = TRUE)
 # download.file(
 #   "https://s3.amazonaws.com/keras-datasets/jena_climate_2009_2016.csv.zip",
-#   "~/Downloads/jena_climate/jena_climate_2009_2016.csv.zip"
+#   "~/Data/jena_climate/jena_climate_2009_2016.csv.zip"
 # )
 # unzip(
-#   "~/Downloads/jena_climate/jena_climate_2009_2016.csv.zip",
-#   exdir = "~/Downloads/jena_climate"
+#   "~/Data/jena_climate/jena_climate_2009_2016.csv.zip",
+#   exdir = "~/Data/jena_climate"
 # )
 
 library(tibble)
 library(tictoc)
+library(keras)
 
-data_dir <- "~/Downloads/jena_climate"
+data_dir <- "~/Data/jena_climate"
 fname <- file.path(data_dir, "jena_climate_2009_2016.csv")
 data <- read.csv(fname, check.names = FALSE)
 
@@ -161,3 +162,24 @@ gru_dropout_time <- toc()
 
 plot(gru_dropout_history)
 
+# stacking rnn layers ####
+stacked_model <- keras_model_sequential() %>% 
+  layer_gru(units = 32, 
+            dropout = 0.1, 
+            recurrent_dropout = 0.5,
+            return_sequences = TRUE,
+            input_shape = list(NULL, dim(data)[[-1]])) %>% 
+  layer_gru(units = 64, activation = "relu",
+            dropout = 0.1,
+            recurrent_dropout = 0.5) %>% 
+  layer_dense(units = 1)
+
+compile(stacked_model, optimizer = optimizer_rmsprop(), loss = "mae")
+
+tic("fitting stacked gru model...")
+stacked_history <- fit_generator(stacked_model, train_gen, steps_per_epoch = 500, 
+                                 epochs = 40, validation_data = val_gen, 
+                                 validation_steps = val_steps)
+stacked_time <- toc()
+
+plot(stacked_history)
