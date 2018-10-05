@@ -12,7 +12,7 @@ library(tibble)
 library(tictoc)
 library(keras)
 
-data_dir <- "~/Data/jena_climate"
+data_dir <- "~/Download/jena_climate"
 fname <- file.path(data_dir, "jena_climate_2009_2016.csv")
 data <- read.csv(fname, check.names = FALSE)
 
