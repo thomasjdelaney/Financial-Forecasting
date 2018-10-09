@@ -14,6 +14,7 @@
 \usepackage{setspace}
 \usepackage{subcaption}
 \usepackage{mathtools}
+\usepackage{siunitx}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -65,7 +66,7 @@ The point of this document is to review our experiments with the meta-learning f
 First we will outline the objectives of these experiments. Then we will give some background on the M4 competition and the meta-learning forecasting method itself. Then we will outline the experiments performed, and the results obtained. The document will conclude with a description of the limitations of our experiments, and suggestions for further research.
 
 \section{Objectives}\label{sec:objectives}
-Our overall objective was to assess how useful the meta-learning forecasting method is in the context of financial forecasting. In order to do this, we did the following:
+Our overall objective was to assess how useful the meta-learning forecasting method is in the context of financial market forecasting. In order to do this, we did the following:
 \begin{enumerate}
 	\item We replicated the findings reported by Montero-Manso et al in their submission to the M4 competition. We focussed on the financial time series provided for the M4 competition in particular.
 	\item We obtained time series from real financial contexts, equity and fixed income prices from the early $21^{\text{st}}$ century. We formatted these data to match the M4 competition data.
@@ -73,7 +74,7 @@ Our overall objective was to assess how useful the meta-learning forecasting met
 	\item We compared the performance of the meta-learning method to the performances of the simpler forecasting methods used in the meta-learning framework.
 \end{enumerate}
 
-We also aimed to find out if an improvement in the model's performance on our real financial data could be achieved by training the model on data from a non-financial context (aka. \textit{ transfer learning}). The authors of the meta-learning method provided a github repository containing the meta-learning model trained on the full M4 competition data \footnote{For details on downloading the trained model, see: \url{https://github.com/robjhyndman/M4metalearning/blob/master/docs/M4_reprod.md}}. We applied this fully trained model to a test set consisting of just the real financial data. In order to achieve our secodary aim, we compared the performance of the fully trained meta-learning method to the performance of the financially trained meta-learning method on our financial data.
+We also aimed to find out if an improvement in the model's performance on our real financial data could be achieved by training the model on data from a non-financial context (aka. \textit{ transfer learning}). The authors of the meta-learning method provided a github repository containing the meta-learning model trained on the full M4 competition data \footnote{For details on downloading the trained model, see: \url{https://github.com/robjhyndman/M4metalearning/blob/master/docs/M4_reprod.md}}. We applied this fully trained model to a test set consisting of just the real financial data. In order to achieve our secondary aim, we compared the performance of the fully trained meta-learning method to the performance of the financially trained meta-learning method on our financial data.
 
 \section{Background}
 The M4 competition is a time series forecasting competition in which a dataset of time series is provided, and researchers and developers are challenged to develop the most accurate forecasting method for these series. No driving series are provided for any of the time series, so all of the methods developed are univariate. The M4 competition is the fourth in a series of forecasting competitions, and took place in 2018. The dataset consisted of $100000$ time series from demographic, financial, industrial, macro and micro economic, and miscellaneous contexts. All of the time series were recorded either hourly, daily, weekly, monthly, quarterly, or yearly. The methods are judged by an error metric on their mean forecast, and another error metric on their prediction intervals. For more information on the M4 competition, see \cite{m4}.
@@ -93,7 +94,9 @@ The forumula for calculating the sMAPE is
 \end{equation}
 where $h$ is the forecast horizon, $Y_t$ is the value of the time series during the forecasted period, and $\hat{Y}_t$ is the forecasted value for $Y_t$. 
 
-\subsubsection{Mean Absolute Square Error}
+The sMAPE was invented to solve the problem of the standard MAPE penalising over-estimations in the forecast ($\hat{Y}_t > Y_t$) more severely than under-estimations.
+
+\subsubsection{Mean Absolute Scaled Error}
 The formula for calculating the MASE for season series is
 \begin{equation}
 	MASE = \frac{1}{h} \frac{\sum_{t=1}^{h}|Y_t - \hat{Y}_t|}{\frac{1}{h-m}\sum_{t=m+1}^{h}|Y_t - Y_{t-m}|}
@@ -119,7 +122,7 @@ is the \textit{indicator} function. The first term in the numerator of (\ref{eq:
 
 \subsection{Finance only model}
 \subsubsection{Training the model}
-To train a meta-learning model specificially for financial data, we extracted the financial time series from the M4 database. There were $24534$ series in total. See table \ref{tab:frequency_breakdown} for a breakdown of the frequencies of these series.
+To train a meta-learning model specificially for financial data, we extracted the financial time series from the M4 database. There were \num[group-separator={,}]{24534} series in total. See table \ref{tab:frequency_breakdown} for a breakdown of the frequencies of these series.
 
 \begin{table}\label{tab:frequency_breakdown}
   \centering
@@ -137,7 +140,7 @@ To train a meta-learning model specificially for financial data, we extracted th
   \label{tab:frequency_breakdown}
 \end{table}
 
-We divided this dataset up into a training set of $n_{training} = 20000$ series and a test set of $n_{test} = 4534$ series. In order to train the meta-learning model we did the following: 
+We divided this dataset up into a training set of $n_{training} = $ \num[group-separator={,}]{20000} series and a test set of $n_{test} = $ \num[group-separator={,}]{4534} series. In order to train the meta-learning model we did the following: 
 \begin{enumerate}
 	\item We divided each individual series in the training set into training and holdout series, where the holdout series is taken from the end of the original series, and is the length of the forecast horizon.
 	\item We then calculated forecasts for each series in the training set, using each of the 9 forecasting methods included in the meta-learning framework. Each of these methods were implemented using the \texttt{forecast} library in \texttt{R}.

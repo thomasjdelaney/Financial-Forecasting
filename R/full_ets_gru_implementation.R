@@ -25,8 +25,8 @@ combineSeriesHoldoutM4 <- function(M4_series) {
 
 data_gen <- function(dataset) {
   num_series <- length(dataset)
-  samples <- array(0, dim = c(num_train_series, num_points_to_use, 4))
-  values <- array(0, dim = c(num_train_series, yearly_forecast_horizon_length))
+  samples <- array(0, dim = c(num_series, num_points_to_use, 4))
+  values <- array(0, dim = c(num_series, yearly_forecast_horizon_length))
   for (i in 1:num_series){
     series <- dataset[[i]]
     series_to_use <- tail(series$x, num_points_to_use)
