@@ -121,6 +121,10 @@ getPredictionFromLevelParams <- function(model_predictions, level_series, alpha)
 
 preds <- predict(gru_model, x = test_samples)
 actual_preds <- array(0, dim = c(num_test_series, yearly_forecast_horizon_length))
+level_preds <- array(0, dim = c(num_test_series, yearly_forecast_horizon_length))
 for (i in 1:num_test_series){
-  actual_preds[i,] <- getPredictionFromLevelParams(preds[i,], test_levels[i,], test_alphas[[i]])[[1]]
+  descaled <- getPredictionFromLevelParams(preds[i,], test_levels[i,], test_alphas[[i]])
+  actual_preds[i,] <- descaled[[1]]
+  level_preds[i,] <- descaled[[2]]
 }
+print(mean(abs(actual_preds - test_values)))
