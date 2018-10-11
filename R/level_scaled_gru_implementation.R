@@ -13,7 +13,7 @@ num_val_series <- 3500
 num_test_series <- 3500
 yearly_train <- yearly_M4[1:num_train_series]
 yearly_val <- yearly_M4[(num_train_series+1):(num_train_series+num_val_series)]
-yearly_test <- yearly_M4[(num_val_series+1):(num_val_series+num_test_series)]
+yearly_test <- yearly_M4[(num_train_series+num_val_series+1):(num_train_series+num_val_series+num_test_series)]
 
 # transforming training data ####
 num_points_to_use <- floor(median(sapply(yearly_train, function(series)length(series$x))))
