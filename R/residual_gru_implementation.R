@@ -18,6 +18,11 @@ yearly_test <- yearly_M4[(num_train_series+num_val_series+1):(num_train_series+n
 # transforming training data ####
 num_points_to_use <- floor(median(sapply(yearly_train, function(series)length(series$x))))
 
+combineSeriesHoldout <- function(M4_series) {
+  comb <- ts.union(M4_series$x, M4_series$xx)
+  pmin(comb[,1], comb[,2], na.rm = TRUE)
+}
+
 data_gen <- function(dataset) {
   num_series <- length(dataset)
   samples <- array(0, dim = c(num_series, num_points_to_use, 1))
@@ -30,11 +35,11 @@ data_gen <- function(dataset) {
     series_sample <- tail(series$x, num_points_to_use)
     series_value <- series$xx
     sample_points <- length(series_sample)
-    ets_model <- ets(c(series_sample, series_value), model = "MNN")
+    ets_model <- ets(combineSeriesHoldout(series), model = "MNN")
     level_sample <- ets_model$states[1:sample_points,1]
     level_value <- ets_model$states[(sample_points+1):(sample_points+1+yearly_forecast_horizon_length),1]
-    series_sample <- series_sample/level_sample - 1
-    series_value <- series_value/level_value - 1
+    series_sample <- head(ets_model$residuals, sample_points)
+    series_value <- tail(ets_model$residuals, yearly_forecast_horizon_length)
     if (sample_points < num_points_to_use) {# padding with zeros
       series_sample <- c(0*1:(num_points_to_use - sample_points), series_sample)
       level_sample <- c(head(level_sample, 1) + 0*1:(num_points_to_use - sample_points), level_sample)
@@ -60,7 +65,7 @@ test_gen <- function(){ # can't use the values in the holdout set when calculati
     sample_points <- length(series_sample)
     ets_model <- ets(series_sample, model = "MNN")
     level_sample <- ets_model$states[1:sample_points,1]
-    series_sample <- series_sample/level_sample - 1
+    series_sample <- ets_model$residuals
     if (sample_points < num_points_to_use) {# padding with zeros
       series_sample <- c(0*1:(num_points_to_use - sample_points), series_sample)
       level_sample <- c(head(level_sample, 1) + 0*1:(num_points_to_use - sample_points), level_sample)
