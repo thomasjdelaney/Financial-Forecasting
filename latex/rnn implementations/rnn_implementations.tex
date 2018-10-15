@@ -1,0 +1,82 @@
+\documentclass[a4paper,12pt]{article}
+%\usepackage[utf8x]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[margin=3cm]{geometry}
+\usepackage{times}
+\usepackage{graphicx}
+%\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{mathtools}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Thomas J. Delaney}
+\rhead{Recurrent neural network implementations}
+\cfoot{\thepage}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\boldnabla}{\mbox{\boldmath$\nabla$}} % to be used in mathmode
+\newcommand{\cbar}{\overline{\mathbb{C}}}% to be used in mathmode
+\newcommand{\diff}[2]{\frac{d #1}{d #2}}% to be used in mathmode
+\newcommand{\difff}[2]{\frac{d^2 #1}{d #2^2}}% to be used in mathmode
+\newcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}} % to be used in mathmode
+\newcommand{\pdifff}[2]{\frac{\partial^2 #1}{\partial #2^2}}% to be used in mathmode
+\newcommand{\upperth}{$^{\mbox{\footnotesize{th}}}$}%to be used in text mode
+\newcommand{\vect}[1]{\mathbf{#1}}% to be used in mathmode
+\newcommand{\curl}[1]{\boldnabla \times \vect{#1}} % to be used in mathmode
+\newcommand{\divr}[1]{\boldnabla \cdot \vect{#1}} %to be used in mathmode
+\newcommand{\modu}[1]{\left| #1 \right|} %to be used in mathmode
+\newcommand{\brak}[1]{\left( #1 \right)} % to be used in mathmode
+\newcommand{\comm}[2]{\left[ #1 , #2 \right]} %to be used in mathmode
+\newcommand{\dop}{\vect{d}} %to be used in mathmode
+\newcommand{\cov}{\text{cov}} %to be used in mathmode
+\newcommand{\var}{\text{var}} %to be used in mathmode
+\newcommand{\mb}{\mathbf} %to be used in mathmode
+\newcommand{\bs}{\boldsymbol} %to be used in mathmode
+% Title Page
+\title{Recurrent neural network implementations on the M4 dataset}
+\date{}
+\author{Thomas J. Delaney}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+The purpose of this document is to describe the recurrent neural networks (RNNs) applied to the M4 dataset as an attempt to forecast the financial series in the M4 dataset.
+
+\section{Objectives}
+\begin{itemize}
+  \item To train non-seasonal and seasonal RNNs on the M4 dataset.
+  \item To use these RNNs to forecast the financial series in the M4 dataset.
+  \item To compare the performance of these RNNs to simpler statistical methods.
+  \item To compare the performance of the RNNs to the M4 winning statistical-RNN hybrid model.
+\end{itemize}
+
+\section{Background}
+For background on the M4 competition, see \cite{meta}.
+
+The winner of the M4 competition was a hybrid forecasting model that combined simple exponential smoothing methods with recurrent neural networks.
+
+\newpage
+
+\bibliography{rnn_implementations.bbl}
+
+\end{document}

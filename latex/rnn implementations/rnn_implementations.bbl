@@ -1,4 +1,16 @@
 \begin{thebibliography}{9}
+  \bibitem{meta}
+  Thomas Delaney,
+  \emph{Meta-learning for financial forecasting}.
+  https://github.com/thomasjdelaney/Financial-Forecasting/blob/master/latex/meta-learning method review/meta-learning\_method\_review.pdf,
+  (2018)
+  
+  \bibitem{smyl}
+  Slawek Smyl, Jai Ranganathan, Andrea Pasqua,
+  \emph{M4 Forecasting Competition: Introducing a New Hybrid ES-RNN Model}.
+  https://eng.uber.com/m4-forecasting-competition/,
+  (2018)
+  
   \bibitem{montero}
   Pablo Montero-Manso, Thiyanga Talagala, Rob J Hyndman, George Athanasopoulos,
   \emph{M4metalearning}.

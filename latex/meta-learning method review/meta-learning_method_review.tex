@@ -94,7 +94,7 @@ The forumula for calculating the sMAPE is
 \end{equation}
 where $h$ is the forecast horizon, $Y_t$ is the value of the time series during the forecasted period, and $\hat{Y}_t$ is the forecasted value for $Y_t$. 
 
-The sMAPE was invented to solve the problem of the standard MAPE penalising over-estimations in the forecast ($\hat{Y}_t > Y_t$) more severely than under-estimations.
+The sMAPE was invented to solve the problem of the standard MAPE penalising over-estimations in the forecast ($\hat{Y}_t > Y_t$) more severely than under-estimations. The sMAPE weights over-estimations and under-estimations equally.
 
 \subsubsection{Mean Absolute Scaled Error}
 The formula for calculating the MASE for season series is
@@ -142,11 +142,11 @@ To train a meta-learning model specificially for financial data, we extracted th
 
 We divided this dataset up into a training set of $n_{training} = $ \num[group-separator={,}]{20000} series and a test set of $n_{test} = $ \num[group-separator={,}]{4534} series. In order to train the meta-learning model we did the following: 
 \begin{enumerate}
-	\item We divided each individual series in the training set into training and holdout series, where the holdout series is taken from the end of the original series, and is the length of the forecast horizon.
+	\item We divided each individual series in the training set into training and holdout series, where the holdout series is taken from the end of the original series, and is the length of the forecast horizon. Please note that we forecast every point up to and including the point at the forecast horizon.
 	\item We then calculated forecasts for each series in the training set, using each of the 9 forecasting methods included in the meta-learning framework. Each of these methods were implemented using the \texttt{forecast} library in \texttt{R}.
 	\item The error measures used by the M4 competition were calculated for each of the 9 forecasts for each series.
 	\item The 42 features used in the meta-learning model were extracted from each series.
-	\item By training multiple \texttt{xgboost} random forests on our dataset of features and series we found the ideal hyperparameters for an \texttt{xgboost} random forest.
+	\item By training multiple \texttt{xgboost} random forests on our dataset of features and series we found a set of fitted hyperparameters for an \texttt{xgboost} random forest.
 	\item Using these hyperparameters we trained an \texttt{xgboost} random forest model, using the M4 competition error measurement as an objective function to minimise. This \texttt{xgboost} random forest is the trained meta-learning model.
 \end{enumerate}
 
@@ -166,7 +166,7 @@ To apply the fully trained meta-learning model to the test data, we downloaded t
 \section{Results}
 
 \subsection{Comparison to simpler methods}
-We first transformed our real financial data into the M4 competition format and applied the fully trained meta-learning model to these data. The forecast horizons were determined by the frequency of the data, $14$ for daily, $13$ for weekly. We compared the performance of the meta-learning method to all of the simpler methods in the meta-learning framework using the MdAPE. We found that the fully trained meta-learning model performed worse on this dataset than most of the simpler forecasting methods. The best performing method was the random walk with drift method. We then trained the finance only meta-learning model, using only a subset of the M4 financial data, and applied this model to the real financial data. This meta-learning model did perform better than the fully trained model, but the random walk with drift was still the best performing method (see table \ref{tab:finance_only_results}).
+We first transformed our real financial market data into the M4 competition format and applied the fully trained meta-learning model to these data. The forecast horizons were determined by the frequency of the data, $14$ for daily, $13$ for weekly. We compared the performance of the meta-learning method to all of the simpler methods in the meta-learning framework using the MdAPE. We found that the fully trained meta-learning model performed worse on this dataset than most of the simpler forecasting methods. The best performing method was the random walk with drift method. We then trained the finance only meta-learning model, using only a subset of the M4 financial data, and applied this model to the real financial data. This meta-learning model did perform better than the fully trained model, but the random walk with drift was still the best performing method (see table \ref{tab:finance_only_results}).
 
 We then applied both of these meta-learning models to a test set of M4 financial data. Again, we measured the MdAPE of the forecasts of each meta-learning model and the nine simpler methods. The results obtained this time agreed with what might be expected. The best performing method was the fully trained meta-learning method, and the second best performing method was the finance only meta-learning method (see table \ref{tab:finance_only_results} for full results).
 
@@ -187,7 +187,7 @@ We then applied both of these meta-learning models to a test set of M4 financial
     Na{\"i}ve & 0.151 & 0.015 \\ \hline
     Seasonal na{\"i}ve & 0.163 & 0.015 \\ \hline
   \end{tabular}
-  \caption{Median absolute percentage error of various forecasting methods on the M4 financial time series and the real financial time series. We used the meta-learning method trained using all of the M4 time series and another meta-learning method trained using only a subset of the financial time series from the M4 time series. Note that most of the forecasting methods perform better on the real financial dataset compared to the M4 financial dataset. But while the best performing method on the M4 financial dataset was the fully trained meta-learning method, the best performing method on the real financial dataset is the random walk with drift.}
+  \caption{Median absolute percentage error of various forecasting methods on the M4 financial time series and the real financial time series. We used the meta-learning method trained using all of the M4 time series and another meta-learning method trained using only a subset of the financial time series from the M4 time series. Note that most of the forecasting methods perform better on the real financial dataset compared to the M4 financial dataset. But while the best performing method on the M4 financial dataset was the fully trained meta-learning method, the best performing method on the real financial market dataset is the random walk with drift.}
   \label{tab:finance_only_results}
 \end{table}
 
@@ -205,7 +205,7 @@ We also compared the overall weighted averages of the fully trained and finance 
     Fully trained & Real financial & 1.037 \\ \hline
     Fully trained & Full M4 dataset & 0.838\cite{res} \\ \hline
   \end{tabular}
-  \caption{The overall weighted average error of the finance only and fully trained meta-learning model applied to both the M4 financial data and the real financial data. Note that by this measure the meta-learning model performs better on the M4 financial data. On the real data, the finance only model outperforms the fully trained model, similar to the findings in table \ref{tab:finance_only_results}.}
+  \caption{The overall weighted average error of the finance only and fully trained meta-learning model applied to both the M4 financial data and the real financial market data. Note that by this measure the meta-learning model performs better on the M4 financial data. On the real data, the finance only model outperforms the fully trained model, similar to the findings in table \ref{tab:finance_only_results}.}
   \label{tab:meta_learning_errors}
 \end{table}
 
@@ -217,13 +217,15 @@ In our search for good hyperparamters for the \texttt{xgboost} random forest, we
 	\item the data subsampling rate,
 	\item the feature subsampling rate.
 \end{itemize}
-During the searching process each combination of paramters and the resulting objective function value was recorded. We clustered these $106$ data points using a Gaussian mixture model. The optimal model was found by minimising the Bayesian information criterion (BIC). This gave a model consisting of two gaussian distributions. We examined the means and covariance matrices for each of these Gaussians. The only major difference between the two distributions was the mean value for $\eta$. It seemed like a lower learning rate resulted in a worse performance.
+During the searching process each combination of parameters and the resulting objective function value was recorded. We clustered these $106$ data points using a Gaussian mixture model. The optimal model was found by minimising the Bayesian information criterion (BIC). This gave a model consisting of two gaussian distributions. We examined the means and covariance matrices for each of these Gaussians. The only major difference between the two distributions was the mean value for $\eta$. It seemed like a lower learning rate resulted in a worse performance.
 
 \section{Conclusions}
 We applied the forecasting method that came second in the M4 time series forecasting competition to real financial time series and the M4 financial data, and compared the results. The method itself is an ensemble forecasting method, trained using machine learning. We refer to it as the meta-learning method. Although the method performed well on the M4 financial data, it was outperformed by simpler statistical methods when applied to the real financial data. This implies that any information that can be used by any of the statistical models in the meta-learning framework to forecast the real financial time series has already be found, and aggregated away through arbitrage.
 
 \subsection{Limitations}
-The M4 competition provides a dataset of time series only, and requires the competitors to forecast each individual series. There are no driving series, and there is no other information other than the context of the series. Therefore each of the methods in the M4 competition, including the meta-learning method, are univariate. In a financial context, we would expect driving factors to be a vital part of any forecasting framework. Therefore the forecasting methods developed for the M4 competition may not be well suited for financial forecasting. 
+The M4 competition provides a dataset of time series only, and requires the competitors to forecast each individual series. There are no driving series, and there is no other information other than the context of the series. Therefore each of the methods in the M4 competition, including the meta-learning method, are univariate. In a financial context, we would expect driving factors to be a vital part of any forecasting framework. Therefore the forecasting methods developed for the M4 competition may not be well suited for financial market forecasting. 
+
+We only used statistical methods in this implmentation. Statistical methods tend to only capture short term effects. Long-term trends and long-term variance are not captured, but this information would be useful for financial market forecasting. 
 
 \subsection{Further Research}
 The meta-learning forecasting method uses mostly statistical methods in its ensemble framework. It does use one neural network through the \texttt{nnetar} function in the \texttt{forecasting} package, but this is a feedforward neural network that uses a small number of time-lags as inputs. This is not the optimal implementation of neural networks for time series. 
