@@ -39,11 +39,12 @@ data_gen <- function(dataset) {
     series_sample <- tail(series$x, num_points_to_use)
     series_value <- series$xx
     sample_points <- length(series_sample)
-    ets_model <- ets(combineSeriesHoldout(series), model = "MNM")
+    series_to_use <- tail(combineSeriesHoldout(series), sample_points + quarterly_forecast_horizon_length)
+    ets_model <- ets(series_to_use, model = "MNM")
     level_sample <- ets_model$states[1:sample_points,1]
-    level_value <- ets_model$states[(sample_points+1):(sample_points+quarterly_forecast_horizon_length),1]
+    level_value <- ets_model$states[(sample_points+1):(sample_points+1+quarterly_forecast_horizon_length),1]
     seasonal_sample <- ets_model$states[1:sample_points,5]
-    seasonal_value <- ets_model$states[(sample_points+1):(sample_points+quarterly_forecast_horizon_length),5]
+    seasonal_value <- ets_model$states[(sample_points+1):(sample_points+1+quarterly_forecast_horizon_length),5]
     series_sample <- series_sample/(level_sample*seasonal_sample) - 1
     series_value <- series_value/(level_value*seasonal_value) - 1
     if (sample_points < num_points_to_use) {# padding with appropriate figures
@@ -141,14 +142,14 @@ getPredictionFromLevelParams <- function(model_predictions, level_series, season
   return(list(series_preds, tail(level_preds, num_predictions), tail(level_preds, num_predictions)))
 }
 
-preds <- predict(gru_model, x = test_samples)
-actual_preds <- array(0, dim = c(num_test_series, quarterly_forecast_horizon_length))
-level_preds <- array(0, dim = c(num_test_series, quarterly_forecast_horizon_length))
-seasonal_preds <- array(0, dim = c(num_test_series, quarterly_forecast_horizon_length))
-for (i in 1:num_test_series){
-  descaled <- getPredictionFromLevelParams(preds[i,], test_levels[i,], test_seasonals[i,], test_alphas[[i]], test_gammas[[i]])
+preds <- predict(gru_model, x = val_samples)
+actual_preds <- array(0, dim = c(num_val_series, quarterly_forecast_horizon_length))
+level_preds <- array(0, dim = c(num_val_series, quarterly_forecast_horizon_length))
+seasonal_preds <- array(0, dim = c(num_val_series, quarterly_forecast_horizon_length))
+for (i in 1:num_val_series){
+  descaled <- getPredictionFromLevelParams(preds[i,], val_levels[i,], val_seasonals[i,], val_alphas[[i]], val_gammas[[i]])
   actual_preds[i,] <- descaled[[1]]
   level_preds[i,] <- descaled[[2]]
   seasonal_preds[i,] <- descaled[[3]]
 }
-print(mean(abs(actual_preds - test_values)))
+print(mean(abs(actual_preds - val_values)))

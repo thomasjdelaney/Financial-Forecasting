@@ -35,7 +35,8 @@ data_gen <- function(dataset) {
     series_sample <- tail(series$x, num_points_to_use)
     series_value <- series$xx
     sample_points <- length(series_sample)
-    ets_model <- ets(combineSeriesHoldout(series), model = "MNN")
+    series_to_use <- tail(combineSeriesHoldout(series), sample_points + yearly_forecast_horizon_length)
+    ets_model <- ets(series_to_use, model = "MNN")
     level_sample <- ets_model$states[1:sample_points,1]
     level_value <- ets_model$states[(sample_points+1):(sample_points+1+yearly_forecast_horizon_length),1]
     series_sample <- head(ets_model$residuals, sample_points)
@@ -124,12 +125,12 @@ getPredictionFromLevelParams <- function(model_predictions, level_series, alpha)
   return(list(series_preds, tail(level_preds, num_predictions)))
 }
 
-preds <- predict(gru_model, x = test_samples)
-actual_preds <- array(0, dim = c(num_test_series, yearly_forecast_horizon_length))
-level_preds <- array(0, dim = c(num_test_series, yearly_forecast_horizon_length))
-for (i in 1:num_test_series){
-  descaled <- getPredictionFromLevelParams(preds[i,], test_levels[i,], test_alphas[[i]])
+preds <- predict(gru_model, x = val_samples)
+actual_preds <- array(0, dim = c(num_val_series, yearly_forecast_horizon_length))
+level_preds <- array(0, dim = c(num_val_series, yearly_forecast_horizon_length))
+for (i in 1:num_val_series){
+  descaled <- getPredictionFromLevelParams(preds[i,], val_levels[i,], val_alphas[[i]])
   actual_preds[i,] <- descaled[[1]]
   level_preds[i,] <- descaled[[2]]
 }
-print(mean(abs(actual_preds - test_values)))
+print(mean(abs(actual_preds - val_values)))
