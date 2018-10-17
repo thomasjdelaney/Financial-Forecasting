@@ -115,12 +115,12 @@ The second hidden layer consisted of $64$ GRUs. This time a recitfied linear uni
 The output layer consisted of a number of densley connected units equal to the number of points to be forecast ($6$ for yearly, $8$ for quarterly).
 
 \subsubsection{Hard sigmoid activation function}\label{sec:hard_sigmoid}
-The hard sigmoid function is a piece-wise linear approximation of the sigmoid function. When plotted in two dimensions, the function consists of three linear segments, one along the x-axis, one with a positive slope, and one parallel to the x-axis with $f(x) = 1$. The fuction can be defined by 
+The hard sigmoid function is a piece-wise linear approximation of the sigmoid function. When plotted in two dimensions, the function consists of three linear segments, one along the x-axis, one with a slope of $\frac{1}{5}$ and intercept of $\frac{1}{2}$, and one parallel to the x-axis with $f(x) = 1$. The fuction can be defined by 
 \begin{align}
 	f(x) = \begin{cases}
-		0, &\text{ if } x < -\frac{1}{2m} \\
-		mx + \frac{1}{2}, &\text{ if }  \frac{1}{2m} \leq x \leq \frac{1}{2m} \\
-		1, &\text{ if } x > \frac{1}{2m}
+		0, &\text{ if } x < -\frac{5}{2} \\
+		\frac{x}{5} + \frac{1}{2}, &\text{ if }  -\frac{5}{2} \leq x \leq \frac{5}{2} \\
+		1, &\text{ if } x > \frac{5}{2}
 	\end{cases}
 \end{align}
 where $m>0$ is the slope of the middle section of the function. 
@@ -153,6 +153,11 @@ For seasonal forecasting, we used a seasonal na{\"i}ve method as the baseline mo
 
 
 \section{Results}
+\subsection{Comparison to baseline measures}
+
+\subsection{Comparison to ETS models}
+
+\subsection{Comparison M4 Winner}
 
 \section{Conclusions}
 
