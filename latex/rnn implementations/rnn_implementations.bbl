@@ -1,4 +1,11 @@
 \begin{thebibliography}{9}
+  \bibitem{m4}
+  Spyros Makridakis,
+  \emph{M4 Competition}.
+  https://www.m4.unic.ac.cy/about/,
+  University of Nicosia,
+  (2018)
+  
   \bibitem{meta}
   Thomas Delaney,
   \emph{Meta-learning for financial forecasting}.
@@ -11,26 +18,30 @@
   https://eng.uber.com/m4-forecasting-competition/,
   (2018)
   
-  \bibitem{montero}
-  Pablo Montero-Manso, Thiyanga Talagala, Rob J Hyndman, George Athanasopoulos,
-  \emph{M4metalearning}.
-  https://github.com/robjhyndman/M4metalearning/,
-  M4 Competition,
-  (2018)
-
-  \bibitem{m4}
-  Spyros Makridakis,
-  \emph{M4 Competition}.
-  https://www.m4.unic.ac.cy/about/,
-  University of Nicosia,
-  (2018)
-  
   \bibitem{lit}
   Thomas Delaney,
   \emph{Forecasting Methods: An Overview}.
   https://github.com/thomasjdelaney/Financial-Forecasting/blob/master/latex/forecasting lit review/forecasting\_lit\_review.pdf,
   (2018)
   
+  \bibitem{fpp}
+  Rob J Hyndman, George Athanasopoulos,
+  \emph{Forecasting: Principles and Practice}.
+  Monash University, Australia,
+  (2018)  
+
+  \bibitem{keras}
+  Keras,
+  \emph{R interface to Keras}.
+  https://keras.rstudio.com/,
+  (2018)
+  
+  \bibitem{tf}
+  Tensorflow,
+  \emph{TensorFlow}.
+  https://www.tensorflow.org/,
+  (2018)
+    
   \bibitem{res}
   Evangelos Spiliotis, Spyros Makridakis, Vassilios Assimakopoulos,
   \emph{The M4 Competition in Progress}.

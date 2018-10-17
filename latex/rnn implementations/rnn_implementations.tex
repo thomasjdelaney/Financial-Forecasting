@@ -63,17 +63,98 @@
 The purpose of this document is to describe the recurrent neural networks (RNNs) applied to the M4 dataset as an attempt to forecast the financial series in the M4 dataset.
 
 \section{Objectives}
+Our main objective in this experiment was to create a forecasting method similar to that of Smyl et al (2018), which won the M4 forecasting competition \cite{smyl}. More specifically, we wanted to create forecasting method that blended statistical forecasting with machine learning methods using recurrent neural networks. So, our aims were:
 \begin{itemize}
-  \item To train non-seasonal and seasonal RNNs on the M4 dataset.
-  \item To use these RNNs to forecast the financial series in the M4 dataset.
-  \item To compare the performance of these RNNs to simpler statistical methods.
-  \item To compare the performance of the RNNs to the M4 winning statistical-RNN hybrid model.
+  \item To train non-seasonal and seasonal forecasting methods using statistical techniques and RNNs together.
+  \item To use these methods to forecast the financial series in the M4 dataset.
+  \item To compare the performance of these methods to simpler statistical methods.
+  \item To compare the performance of these methods to the M4 winning statistical-RNN hybrid model.
 \end{itemize}
+Our hope (rather than expectation) was that a model simpler than that in \cite{smyl} could be used to forecast the financial time series.
 
 \section{Background}
-For background on the M4 competition, see \cite{meta}.
+For background on the M4 competition, see \cite{m4} or \cite{meta}.
 
-The winner of the M4 competition was a hybrid forecasting model that combined simple exponential smoothing methods with recurrent neural networks.
+The winner of the M4 competition was a hybrid forecasting model that combined simple exponential smoothing methods with recurrent neural networks. It was developed by Slawek Smyl while working at Uber. In this model, simple exponential smoothing is used to estimate a multiplicative level and seasonality of each time series. These level and seasonality components are used to scale the time series before the time series is passed to the RNN. An RNN with a different architecture is used for each time series frequency. Each RNN uses LSTM cells and dilation, and the  attention mechanism is used for some frequencies. 
+
+The learning mechanism and model is hierarchical in nature. The exponential smoothing parameters are learned for each individual time series, whereas the weights in the RNN are learned across all the scaled time series. For more information on this model see \cite{smyl} or \cite{lit}. For more information on recurrent neural networks, see \cite{lit}.
+
+The statistical modelling in this experiment was performed in \texttt{R} using the \texttt{forecasting} package. We specifically used an \textit{ets model} for modelling both seasonal and non-seasonal data. For more information about ets models, other statistical models, and the \texttt{forecasting} package see \cite{fpp}. 
+
+The RNNs in this experiment we created and trained in \texttt{R} using \textit{RStudio} and \textit{Keras}. Keras is a high-level neural networks API enabling quick and easy building of and experimentation with neural networks. We used \textit{tensorflow} as the back-end for Keras. For for information on Keras, see \cite{keras}. For more information on Tensorflow, see\cite{tf}.
+
+\section{Methods}
+
+\subsection{Statistical Modelling}\label{sec:stats_modelling}
+In this section, we describe the statistical models applied to the time series. Bare in mind that these models were not intended to accurately model or forecast the time series. The intention was to use the level and seasonal components extracted to scale the time series before passing the scaled series into the RNN.
+
+\subsubsection{Non-seasonal}\label{sec:non_seasonal_stats_modelling}
+To statistically model the yearly time series, we used a non-seasonal ets model with a multiplicative error and no trend component. This models the time series as a level component with multiplicative white noise error. The model is defined by
+\begin{align}
+	y_t &= \ell_{t-1}(1 + \epsilon_t) \label{eq:non_seasonal_series} \\
+	\ell_t &= \ell_{t-1}(1 + \alpha \epsilon_t) \label{eq:non_seasonal_level}
+\end{align}
+where $y_t$ is the time series, $\ell_t$ is the level component, and $\alpha$ is a smoothing parameter.
+
+\subsubsection{Seasonal}\label{sec:seasonal_stats_modelling}
+To statistically model quarterly time series, we used an ets model with a multiplicative seasonality, multiplicative error, and no trend component. This models the time series as a level component with a multiplicative seasonal component, and a multiplicative white noise error. The model is defined by
+\begin{align}
+	y_t &= \ell_{t-1}s_{t-m}(1 + \epsilon_t) \label{eq:seasonal_series} \\
+	\ell_t &= \ell_{t-1}(1 + \alpha \epsilon_t) \label{eq:seasonal_level} \\
+	s_t &= s_{t-m}(1 + \gamma \epsilon_t) \label{eq:seasonal_season}
+\end{align}
+where $y_t$ is the time series, $\ell_t$ is the level component, $\alpha$ is a level smoothing parameter, $s_t$ is the seasonal component, $\gamma$ is the seasonal smoothing parameter, and $m$ is the number of time points (or seasons) in a full seasonal cycle (e.g. $4$ for quarterly data).
+
+\subsection{Recurrent Neural Network}
+The RNN that we used in this experiment is fairly simple compared to those used in \cite{smyl}. Time contraints were the main reason for this. The network consisted of an input layer, two hidden layers, and an output layer. 
+
+The first hidden layer consisted of $32$ gated recurrent units (GRUs), with $\tanh$ output activation and \textit{hard sigmoid} recurrent activation (see \ref{sec:hard_sigmoid}). A standard dropout rate of $10\%$ and recurrent dropout rate of $50\%$ were implemented.
+
+The second hidden layer consisted of $64$ GRUs. This time a recitfied linear unit output activation was used.The same dropout rates were used.
+
+The output layer consisted of a number of densley connected units equal to the number of points to be forecast ($6$ for yearly, $8$ for quarterly).
+
+\subsubsection{Hard sigmoid activation function}\label{sec:hard_sigmoid}
+The hard sigmoid function is a piece-wise linear approximation of the sigmoid function. When plotted in two dimensions, the function consists of three linear segments, one along the x-axis, one with a positive slope, and one parallel to the x-axis with $f(x) = 1$. The fuction can be defined by 
+\begin{align}
+	f(x) = \begin{cases}
+		0, &\text{ if } x < -\frac{1}{2m} \\
+		mx + \frac{1}{2}, &\text{ if }  \frac{1}{2m} \leq x \leq \frac{1}{2m} \\
+		1, &\text{ if } x > \frac{1}{2m}
+	\end{cases}
+\end{align}
+where $m>0$ is the slope of the middle section of the function. 
+
+This function is commonly used in place of the sigmoid function because it's much quicker to calculate the hard sigmoid. Instead of performing the calculations necessary for $\frac{1}{1 + e^{-x}}$, all that is required is to calibrate $m$. 
+
+\subsection{Combining the statistical model and RNN}
+\subsubsection{Non-seasonal}
+In order to combine the statistical model with the recurrent neural network, and attempt to use the power of both we did the following:
+\begin{enumerate}
+	\item We split the dataset of non-seasonal M4 series into training, validation, and test sets.
+	\item We fit the non-seasonal ets model described in section \ref{sec:non_seasonal_stats_modelling} to each of the training series. This returned a level series, and a residual series for each time step in each series. 
+	\item We trained the RNN to forecast the residual series, using the mean absolute error as the loss function. If we examine equation \ref{eq:non_seasonal_series}, we can see that forecasting the residuals is equivalent to forecasting a scaled and translated version of the time series, namely $\frac{y_t}{\ell_{t-1}} - 1$.
+	\item In order to obtain a descaled and detranslated forecast, we used the values for $\epsilon_t$ given to us by the RNN output along with equations \ref{eq:non_seasonal_series} and \ref{eq:non_seasonal_level} to calculate $y_t$ and $\ell_t$ for each timestep in the forecast horizon.
+\end{enumerate}
+
+We used the validation set during the training of the RNN, and to quantify the performance of our hybrid method compared to the baseline method.
+
+\subsubsection{Seasonal}
+The process for the seasonal time series was similar to that for the non-seasonal, except that the fitted ets model (as described in section \ref{sec:seasonal_stats_modelling}) returned a seasonal series as well as a level series and a residual series. The residual series was equivalent to $\frac{y_t}{\ell_{t-1}s_{t-1}} - 1$ In order to obtain the final forecast, we had to use the level and seasonal series with equations \ref{eq:seasonal_series}, \ref{eq:seasonal_level}, and \ref{eq:seasonal_season} to descale and deseasonalise the output of the RNN.
+
+\subsection{Baseline Methods}
+In order to assess the performance of our hybrid model, we compared its forecasting performance to that of a simpler statistical model. We chose different simple models for non-seasonal and seasonal data.
+
+\subsubsection{Non-seasonal}
+For non-seasonal forecasting we used a random walk model with a drift component as the baseline model.
+
+\subsubsection{Seasonal}
+For seasonal forecasting, we used a seasonal na{\"i}ve method as the baseline model.
+
+
+\section{Results}
+
+\section{Conclusions}
 
 \newpage
 

@@ -42,9 +42,9 @@ data_gen <- function(dataset) {
     series_to_use <- tail(combineSeriesHoldout(series), sample_points + quarterly_forecast_horizon_length)
     ets_model <- ets(series_to_use, model = "MNM")
     level_sample <- ets_model$states[1:sample_points,1]
-    level_value <- ets_model$states[(sample_points+1):(sample_points+1+quarterly_forecast_horizon_length),1]
+    level_value <- ets_model$states[(sample_points+1):(sample_points+quarterly_forecast_horizon_length),1]
     seasonal_sample <- ets_model$states[1:sample_points,5]
-    seasonal_value <- ets_model$states[(sample_points+1):(sample_points+1+quarterly_forecast_horizon_length),5]
+    seasonal_value <- ets_model$states[(sample_points+1):(sample_points+quarterly_forecast_horizon_length),5]
     series_sample <- series_sample/(level_sample*seasonal_sample) - 1
     series_value <- series_value/(level_value*seasonal_value) - 1
     if (sample_points < num_points_to_use) {# padding with appropriate figures
