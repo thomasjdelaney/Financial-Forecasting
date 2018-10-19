@@ -100,21 +100,23 @@ c(test_samples, test_levels, test_seasonals, test_alphas, test_gammas, test_valu
 
 # naive method ####
 evaluate_naive_method <- function() {
-  num_series <- length(quarterly_val)
-  batch_maes <- array(0, dim = c(num_series))
+  num_series <- length(quarterly_test)
+  sn_maes <- array(0, dim = c(num_series))
+  sn_residuals <- c()
   for (i in 1:num_series) {
-    val_series <- quarterly_val[[i]]
-    val_samples <- val_series$x
-    val_value <- val_series$xx
-    rw_drift_model <- snaive(val_samples, h = quarterly_forecast_horizon_length)
-    fc <- forecast(rw_drift_model, h = quarterly_forecast_horizon_length)$mean
-    batch_maes[[i]] <- mean(abs(fc - val_value))
+    test_series <- quarterly_test[[i]]
+    test_samples <- test_series$x
+    test_value <- test_series$xx
+    sn_model <- snaive(test_samples, h = quarterly_forecast_horizon_length)
+    fc <- forecast(sn_model, h = quarterly_forecast_horizon_length)$mean
+    sn_maes[[i]] <- mean(abs(fc - test_value))
+    sn_residuals <- c(sn_residuals, fc - test_value)
   }
-  print(mean(batch_maes))
+  return(list(sn_maes, sn_residuals))
 }
 
 tic("calculating naive loss...")
-naive_loss <- evaluate_naive_method()
+c(sn_maes, sn_residuals) %<-% evaluate_naive_method()
 naive_time <- toc()
 
 # simple gru network ####
@@ -142,14 +144,14 @@ getPredictionFromLevelParams <- function(model_predictions, level_series, season
   return(list(series_preds, tail(level_preds, num_predictions), tail(level_preds, num_predictions)))
 }
 
-preds <- predict(gru_model, x = val_samples)
-actual_preds <- array(0, dim = c(num_val_series, quarterly_forecast_horizon_length))
-level_preds <- array(0, dim = c(num_val_series, quarterly_forecast_horizon_length))
-seasonal_preds <- array(0, dim = c(num_val_series, quarterly_forecast_horizon_length))
-for (i in 1:num_val_series){
-  descaled <- getPredictionFromLevelParams(preds[i,], val_levels[i,], val_seasonals[i,], val_alphas[[i]], val_gammas[[i]])
+preds <- predict(gru_model, x = test_samples)
+actual_preds <- array(0, dim = c(num_test_series, quarterly_forecast_horizon_length))
+level_preds <- array(0, dim = c(num_test_series, quarterly_forecast_horizon_length))
+seasonal_preds <- array(0, dim = c(num_test_series, quarterly_forecast_horizon_length))
+for (i in 1:num_test_series){
+  descaled <- getPredictionFromLevelParams(preds[i,], test_levels[i,], test_seasonals[i,], test_alphas[[i]], test_gammas[[i]])
   actual_preds[i,] <- descaled[[1]]
   level_preds[i,] <- descaled[[2]]
   seasonal_preds[i,] <- descaled[[3]]
 }
-print(mean(abs(actual_preds - val_values)))
+print(mean(abs(actual_preds - test_values)))
